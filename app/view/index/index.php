@@ -1,0 +1,1 @@
+<img src="<?php $this->url('public/imgs/temp.jpg') ?>" alt="" style="width: 100%">

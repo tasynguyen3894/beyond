@@ -1,0 +1,12 @@
+{
+	"extension.databases": [
+		{
+			"type": "mysql",
+			"name": "localhost (mysql)",
+			"host": "localhost",
+			"user": "root",
+			"password": "",
+			"database": "hr"
+		}
+	]
+}
