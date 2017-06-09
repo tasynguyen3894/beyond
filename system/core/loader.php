@@ -1,11 +1,14 @@
 <?php
 
-    // Load all
-
     class Loader
     {
         private $controller_name;
         private $action_name;
+        private $error_message;
+
+        public function __construct()
+        {
+        }
 
         private function _loadFile()
         {
@@ -19,7 +22,13 @@
 
             // Load all core 
             require_once(PATH_CORE . "/view.php");
+            require_once(PATH_CORE . "/model.php");
             require_once(PATH_CORE . "/controller.php");
+
+            foreach (glob(PATH_APPLICATION . "/model/*.php") as $filename)
+            {
+                require_once($filename);
+            }
 
             foreach (glob(PATH_APPLICATION . "/controller/*.php") as $filename)
             {
@@ -65,20 +74,23 @@
             $controller_name = ucfirst($controller) . "Controller";
             $action_name = strtolower($action) . "Action";
             if (!file_exists(PATH_APPLICATION . '/controller/' . $controller_name . '.php')){
-                die ('Controller not exist!');
+                $this->error_message = "File " . $controller_name . '.php not exist';
+                return;
             }
 
-            // require_once(PATH_APPLICATION . '/controller/' . $controller_name . '.php');
 
             if (!class_exists($controller_name)){
-                die ('Controller not exist!');
+                $this->error_message = "Controller " . $controller . ' not exist';
+                return;
             }
             
             $controller_call = new $controller_name();
 
             if ( !method_exists($controller_name, $action_name)){
-                die ('Action not exist!');
+                $this->error_message = "Action " . $action . ' not exist';
+                return;
             }
+
             if(count($array_request_Uri) <= 2)
             {
                 $controller_call->{$action_name}();
@@ -92,14 +104,26 @@
                 }
                 call_user_func_array(array($controller_call, $action_name), $array_params);
             }
+
             return $controller_call->view;
+            
         }
+
+        public function Exception_handler($e)
+        {
+        } 
 
         public function _load()
         {
-
             $this->_loadFile();
             $info_controller = $this->_loadController();
-            $info_controller->_loadView($this->controller_name . '/' . $this->action_name);
+            if(empty($this->error_message))
+            {
+                $info_controller->_loadView($this->controller_name . '/' . $this->action_name);
+            }
+            else
+            {
+                echo $this->error_message;
+            }
         }
     }

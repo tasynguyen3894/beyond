@@ -12,6 +12,13 @@
         protected $_content = '';
 
         protected $_url = '';
+        
+        private $error_message;
+
+        public function getErrorMessage()
+        {
+            return $this->error_message;
+        }
 
         public function __construct()
         {
@@ -63,7 +70,8 @@
             }
             else
             {
-                die('View not exists');
+                $this->error_message = "View " . $view . '.php not exists!';
+                return;
             }
 
             if(!empty($this->_layout) && $this->_isLoadLayout == true)
@@ -90,7 +98,8 @@
             }
             else
             {
-                die('Layout not exists');
+                $this->error_message = "View " . $this->_layout . '.php not exists!';
+                return;
             }
             echo $loadView;
         }
